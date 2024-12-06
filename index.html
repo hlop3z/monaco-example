@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+    <!-- Monaco-Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
+    <script>
+        require.config({
+            paths: {
+                vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs",
+            },
+        });
+        window.useMonaco = (callback) =>
+            require(["vs/editor/editor.main"], () => callback(monaco));
+    </script>
+
+    <!-- Monaco-Plugin -->
+    <script src="./lang_jsx.js"></script>
+    <script>
+        useMonaco((monaco) =>
+            monaco.languages.setMonarchTokensProvider("javascript", JSXMonaco)
+        );
+    </script>
+
+    <!-- Vueky -->
+    <script src="https://unpkg.com/vueky@latest" type="text/javascript"></script>
+
+    <!-- Xtyle CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/xtyle-css@latest" />
+
+    <!-- Chota CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest" />
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding: 0 20px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Monaco Editor Sample</h2>
+    <div class="row">
+        <div class="col-6">
+            <h3>The Code</h3>
+        </div>
+        <div class="col-6" v-scope>
+            <label for="cars">Language:</label>
+            <select name="langs" id="langs" @change="vueky.method('getSelectLang')">
+                <option class="tt-t" v-for="key in $globals.langs" :value="key">
+                    ${ key }
+                </option>
+            </select>
+        </div>
+
+        <div class="col-12">
+            <div id="container" style="width: 100%; height: 85vh"></div>
+        </div>
+    </div>
+
+    <!-- @ Using `useMonaco` @ -->
+    <script>
+        // Register a global store for demonstration purposes
+        window.useMonaco.langs = [
+            "go",
+            "python",
+            "javascript",
+            "typescript",
+            "graphql",
+            "scss",
+            "html",
+            "xml",
+            "yaml",
+            "dockerfile",
+            "handlebars",
+            "markdown",
+            "mysql",
+            "pgsql",
+            "sql",
+            "rust",
+            "shell",
+            "powershell",
+            "powerquery",
+        ];
+
+        vueky.init({
+            router: {
+                history: false,
+                baseURL: "/",
+            },
+            globals: {
+                langs: useMonaco.langs,
+            },
+            store: {
+                // Global reactive store
+                count: 0,
+            },
+            methods: {
+                // Custom methods
+                log(args) {
+                    // vueky.method('log', {val: 1})
+                    console.log(args.val)
+                },
+                getSelectLang() {
+                    const name = "langs"
+                    const el = document.getElementById(name)
+                    vueky.store("monaco").setLang(el.value);
+                }
+            },
+        });
+
+        // Register a global store
+        vueky.store("monaco", {
+            editor: {},
+            set(name, val) {
+                const self = this;
+                self.editor[name] = () => val;
+            },
+            setLang(lang, editorName = "main") {
+                const self = this;
+                const editor = this.editor[editorName]();
+                // editor.updateOptions({ theme: "vs" })
+                useMonaco((monaco) => {
+                    const model = editor.getModel();
+                    monaco.editor.setModelLanguage(model, lang);
+                });
+            },
+        });
+
+        useMonaco((monaco) => {
+            const element = document.getElementById("container");
+            // Mount the editor
+            const editor = monaco.editor.create(element, {
+                language: "scss",
+                theme: "vs-dark",
+                automaticLayout: true,
+                value: `const Hello = <h1>Hello world</h1>`,
+            });
+
+            vueky.store("monaco").set("main", editor);
+        });
+
+        vueky.app().mount();
+
+    </script>
+</body>
+
+</html>
