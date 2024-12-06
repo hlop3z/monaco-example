@@ -381,26 +381,3 @@ const JSXMonaco = (function () {
   // Return => JSX-Tokens
   return JSXMonacoTokens;
 })();
-
-const Langs = [
-  "cpp",
-  "dockerfile",
-  "go",
-  "graphql",
-  "handlebars",
-  "html",
-  "javascript",
-  "markdown",
-  "mysql",
-  "pgsql",
-  "powerquery",
-  "powershell",
-  "python",
-  "rust",
-  "scss",
-  "shell",
-  "sql",
-  "typescript",
-  "xml",
-  "yaml",
-];
