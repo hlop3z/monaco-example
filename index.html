@@ -79,13 +79,38 @@
         });
     </script>
 
+    <script>
+        useMonaco(() => {
+            // --- Javascript/Typescript Compiler Options ---
+            monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+                allowNonTsExtensions: true,
+                checkJs: true,
+                module: monaco.languages.typescript.ModuleKind.ESNext,
+                target: monaco.languages.typescript.ScriptTarget.ES2020,
+                jsx: monaco.languages.typescript.JsxEmit.React,
+            });
+
+            const customTypes = `
+      declare const mylib: {
+        /**
+         * Global Actions
+         */
+        action: any
+      }
+      `;
+            // Inject for JavaScript (and TypeScript)
+            monaco.languages.typescript.javascriptDefaults.addExtraLib(customTypes, 'file:///node_modules/@types/mylibrary/index.d.ts');
+
+        })
+    </script>
+
     <!-- @ Using `useMonaco` @ -->
     <script>
         // Register a global store for demonstration purposes
         window.useMonaco.langs = [
+            "javascript",
             "python",
             "go",
-            "javascript",
             "typescript",
             "graphql",
             "scss",
@@ -152,10 +177,10 @@
             const element = document.getElementById("container");
             // Mount the editor
             const editor = monaco.editor.create(element, {
-                language: "python",
+                language: "javascript",
                 theme: "vs-dark",
                 automaticLayout: true,
-                value: `import js`,
+                value: ``,
             });
 
             vueky.store("monaco").set("main", editor);
