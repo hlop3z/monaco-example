@@ -18,11 +18,16 @@
 
     <!-- Monaco-Plugin -->
     <script src="./lang_jsx.js"></script>
+
+    <!-- Pyodide -->
+    <script src="./lang_py.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.27.5/full/pyodide.js"></script>
     <script>
-        useMonaco((monaco) =>
-            monaco.languages.setMonarchTokensProvider("javascript", JSXMonaco)
-        );
+        (async function () {
+            window.pyodide = await loadPyodide();
+        })()
     </script>
+
 
     <!-- Vueky -->
     <script src="https://unpkg.com/vueky@latest" type="text/javascript"></script>
@@ -62,12 +67,24 @@
         </div>
     </div>
 
+
+    <script>
+        useMonaco(async (monaco) => {
+            // --- Python Completion Providers ---
+            await PyodideCompletion(monaco);
+            // monaco.languages.registerCompletionItemProvider('python', PyCompletion(monaco));
+            // --- Javascript/Typescript Completion Providers ---
+            monaco.languages.setMonarchTokensProvider("javascript", JSXMonaco);
+            monaco.languages.setMonarchTokensProvider("typescript", JSXMonaco);
+        });
+    </script>
+
     <!-- @ Using `useMonaco` @ -->
     <script>
         // Register a global store for demonstration purposes
         window.useMonaco.langs = [
-            "go",
             "python",
+            "go",
             "javascript",
             "typescript",
             "graphql",
@@ -135,10 +152,10 @@
             const element = document.getElementById("container");
             // Mount the editor
             const editor = monaco.editor.create(element, {
-                language: "scss",
+                language: "python",
                 theme: "vs-dark",
                 automaticLayout: true,
-                value: `const Hello = <h1>Hello world</h1>`,
+                value: `import js`,
             });
 
             vueky.store("monaco").set("main", editor);
