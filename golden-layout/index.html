@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Golden Layout Basic with Restore Buttons</title>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="https://golden-layout.com/files/latest/js/goldenlayout.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-base.css" />
+    <link type="text/css" rel="stylesheet" href="//golden-layout.com/assets/css/goldenlayout-dark-theme.css" />
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            height: 100%;
+        }
+
+        button {
+            margin-right: 10px;
+        }
+
+        .golden-layout-app {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #controls {
+            padding: 10px;
+            background-color: #1e1e1e;
+            color: white;
+        }
+
+        #layoutRoot {
+            flex-grow: 1;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="golden-layout-app">
+        <div id="controls"></div>
+        <div id="layoutRoot"></div>
+    </div>
+
+    <script>
+        const myLayout = new GoldenLayout({
+            content: [{
+                type: 'row',
+                content: [
+                    {
+                        type: 'stack',
+                        content: [
+                            {
+                                type: 'component',
+                                componentName: 'example',
+                                componentState: { text: 'Component 1' },
+                                title: 'Component 1'
+                            },
+                            {
+                                type: 'component',
+                                componentName: 'example',
+                                componentState: { text: 'Component 2' },
+                                title: 'Component 2'
+                            },
+                            {
+                                type: 'component',
+                                componentName: 'example',
+                                componentState: { text: 'Component 3' },
+                                title: 'Component 3'
+                            }
+                        ]
+                    },
+                    {
+                        type: 'stack',
+                        content: [
+                            {
+                                type: 'component',
+                                componentName: 'example',
+                                componentState: { text: 'Component 1' },
+                                title: 'Component 1'
+                            },
+                        ]
+                    }
+                ]
+            }]
+        }, $('#layoutRoot'));
+
+        myLayout.registerComponent('example', function (container, state) {
+            container.getElement().html('<h2>' + state.text + '</h2>');
+        });
+
+        myLayout.init();
+
+
+        function addMenuItem(title, text) {
+            var element = $('<button>' + text + '</button>');
+            $('#controls').append(element);
+
+            var newItemConfig = {
+                title: title,
+                type: 'component',
+                componentName: 'example',
+                componentState: { text: text }
+            };
+
+            myLayout.createDragSource(element, newItemConfig);
+        };
+
+        addMenuItem('Add me!', 'You\'ve added me!');
+        addMenuItem('Me too!', 'You\'ve added me too!');
+    </script>
+</body>
+
+</html>
